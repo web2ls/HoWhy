@@ -1,0 +1,10 @@
+var xhr;
+if (window.ActiveXObject) { 				Проверка наличия объекта ActiveX
+xhr = new ActiveXObject(“Microsoft.XMLHTTP”);
+}
+else if (window.XMLHttpRequest) { 				Проверка наличия XHR
+xhr = new XMLHttpRequest();
+}
+else { 				Возбуждает исключение, если XHR не поддерживается
+throw new Error(“Ajax is not supported by this browser”);
+}
