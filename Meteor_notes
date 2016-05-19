@@ -1,0 +1,66 @@
+//main.html
+<head>
+	<title>Resolutions App</title>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Monthly Resolution</h1>
+
+			<label class="hide-finished">
+			<input type="checkbox" checked="{{hideFinished}}">
+			Hide Finished Resolutions
+			</label>
+
+
+			<form class="new-resolution">
+				<input type="text" name="title" placeholder="New resolution here...">
+				<input type="submit" value="Submit">
+			</form>
+		</header>
+		<ul>
+			{{#each resolutions}}
+				{{> resolution}}
+			{{/each}}
+		</ul>
+	</div>
+</body>
+
+
+<template name="resolution">
+	<li class="{{#if checked}}checked{{/if}}">
+		<input class="toggle-checked" type="checkbox" checked="{{checked}}">
+		<span class="text">{{title}}</span>
+		<button class="delete">Remove</button>
+	</li>
+</template>
+
+//main.js
+Template.body.helpers({
+  resolutions: function() {
+    return Tasks.find();
+  }
+});
+
+Template.body.events({
+  'submit .add-task': function(event) {
+    var name = event.target.name.value;
+
+    Tasks.insert({
+      title: name,
+      createdAt: new Date()
+    });
+
+    event.target.name.value = '';
+    return false;
+  }
+});
+
+Template.resolution.events({
+  'click .delete-task': function(event) {
+    Tasks.remove(this._id)
+  },
+   'change .checked': function(event) {
+     Tasks.update(this._id, {$set: {checked: !this.checked}});
+   }
+});
