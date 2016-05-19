@@ -35,32 +35,49 @@
 	</li>
 </template>
 
+
+
+
 //main.js
 Template.body.helpers({
-  resolutions: function() {
-    return Tasks.find();
-  }
+	resolutions: function() {
+		if (Session.get('hideFinished')) {
+			return Resolutions.find({checked: {$ne: true}});
+		} else {
+			return Resolutions.find();
+		}
+		
+	},
+	hideFinished: function() {
+		return Session.get('hideFinished');
+	}
 });
+
 
 Template.body.events({
-  'submit .add-task': function(event) {
-    var name = event.target.name.value;
+	'submit .new-resolution': function(event) {
+		var title = event.target.title.value;
 
-    Tasks.insert({
-      title: name,
-      createdAt: new Date()
-    });
+		Resolutions.insert({
+			title: title,
+			createdAt: new Date()
+		});
 
-    event.target.name.value = '';
-    return false;
-  }
+		event.target.title.value = '';
+
+		return false;
+	},
+	'change .hide-finished': function(event) {
+		Session.set('hideFinished', event.target.checked);
+	}
 });
 
+
 Template.resolution.events({
-  'click .delete-task': function(event) {
-    Tasks.remove(this._id)
-  },
-   'change .checked': function(event) {
-     Tasks.update(this._id, {$set: {checked: !this.checked}});
-   }
+	'click .delete': function(event) {
+		Resolutions.remove(this._id);
+	},
+	'click .toggle-checked': function() {
+		Resolutions.update(this._id, {$set: {checked: !this.checked}});
+	}
 });
